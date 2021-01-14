@@ -87,6 +87,25 @@ def food_random_postion():
     # return the x, y coordinate
     return x_coordinate, y_coordinate
 
+# define the snake head direction
+def snake_head_direction(snake,snake_direction):
+    # up
+    if snake_direction.second_variate < 0:
+        snake.snake_head.first_frame = 1 * snake.snake_head.multi_frames_columns
+        snake.snake_head.last_frame = snake.snake_head.first_frame + 1
+    #down
+    elif snake_direction.second_variate > 0:
+        snake.snake_head.first_frame = 3 * snake.snake_head.multi_frames_columns
+        snake.snake_head.last_frame = snake.snake_head.first_frame + 1
+    #lift
+    elif snake_direction.first_variate < 0:
+        snake.snake_head.first_frame = 0 * snake.snake_head.multi_frames_columns
+        snake.snake_head.last_frame = snake.snake_head.first_frame + 1
+    # right
+    elif snake_direction.first_variate > 0:
+        snake.snake_head.first_frame = 2 * snake.snake_head.multi_frames_columns
+        snake.snake_head.last_frame = snake.snake_head.first_frame + 1
+
 
 # define two variate with two method respectively
 class two_variate(object):
@@ -112,5 +131,8 @@ class two_variate(object):
     # the function of property is to allow variate_one have the two method
     # automatically trigger when calling
     second_variate = property(get_variate_two, set_variate_two)
+
+
+
 
 
