@@ -1,0 +1,116 @@
+#author SryMkr
+#date 2020.1.14
+
+# The library consists of some basic functions
+# to support Snake Game
+
+
+# import packages
+import pygame
+import random
+import numpy as np
+
+# show general texts of screen
+def print_text(font_size, x_coordinate, y_coodinate, text, color=(0,0,0)):
+    # return a surface
+    imgText = font_size.render(text, True, color)
+    # get window/screen/display surface  return surface
+    screen = pygame.display.get_surface()
+    #built imagText onto Screen
+    screen.blit(imgText,(x_coordinate, y_coodinate))
+
+# show game results of screen
+def print_result(font_size, x_start, y_start, list, color=(0,0,0)):
+    # get window/screen/display surface  return surface
+    screen = pygame.display.get_surface()
+    # show the completed English words
+    for text in list:
+        # return a surface
+        imgText = font_size.render(text, True, color)
+        screen.blit(imgText, (x_start, y_start))
+        x_start += 240
+        if x_start > 30 * 16:
+            x_start = 0
+            y_start += 60
+
+
+
+# save game records
+def save_record(filename,highest_record):
+    with open(filename,'w') as f:
+        f.write(str(highest_record))
+
+
+# load game records
+def load_record(filename):
+    with open(filename,'r') as f:
+        record = f.read()
+    return record
+
+
+# get index of words task
+# get the counterpart index of alphabet
+def words(words_list, alphabet_list):
+    # create alphabet dictionary
+    alphabet = {}
+    # alphabet index
+    alphabet_i = 1
+    # word index
+    word_index = 1
+    # reture an alphabet dictionary for show correct alphabet
+    for word in words_list:
+        for body_al in word:
+            # find out every alphabet index
+            alphabet_index = alphabet_list.index(body_al)
+            # built dictionary
+            alphabet["{}-{}".format(word_index, alphabet_i)] = alphabet_index
+            # alphabet number plus 1
+            alphabet_i = alphabet_i + 1
+        # word number plus 1
+        # word_index is to track current word task
+        word_index = word_index + 1
+    # return dictionary
+    return alphabet
+
+
+# for three different position of three different food
+# in case they overlap
+def food_random_postion():
+    # create x coordinate list
+    x_coordinate_list = list(np.arange(0, 24)*30)
+    # create y coordinate list
+    y_coordinate_list = list(np.arange(6, 18)*30)
+    # randomly choose three x coordinate
+    x_coordinate = random.sample(x_coordinate_list,3)
+    # randomly choose three y coordinate
+    y_coordinate = random.sample(y_coordinate_list, 3)
+    # return the x, y coordinate
+    return x_coordinate, y_coordinate
+
+
+# define two variate with two method respectively
+class two_variate(object):
+    # define two private variates
+    def __init__(self, variate_one, variate_two):
+        self.__x = variate_one
+        self.__y = variate_two
+
+    # get first variate
+    def get_variate_one(self): return self.__x
+    # set first variate
+    def set_variate_one(self, x): self.__x = x
+    # the function of property is to allow variate_one have the two method
+    # automatically trigger when calling
+    # (property has claimed  the class property
+    # therefore, there is not self before first_variate)
+    first_variate = property(get_variate_one, set_variate_one)
+
+    # get second variate
+    def get_variate_two(self): return self.__y
+    # set second variate
+    def set_variate_two(self, y): self.__y = y
+    # the function of property is to allow variate_one have the two method
+    # automatically trigger when calling
+    second_variate = property(get_variate_two, set_variate_two)
+
+
