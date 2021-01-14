@@ -3,10 +3,6 @@
 # this library is for snake head
 
 
-
-# eating action to be solved
-
-
 # import package
 import pygame
 from pygame.locals import *
@@ -33,6 +29,8 @@ class MySprite_head(pygame.sprite.Sprite):
         self.multi_frames_columns = 1
         # for record last change time
         self.last_time = 0
+        # control the direction of head
+        self.head_direction = 0
 
     # get x_coordinate of one frame
     def _get_x_coordinate(self):
@@ -84,3 +82,4 @@ class MySprite_head(pygame.sprite.Sprite):
             self.image = self.multi_frames.subsurface(rect)
             # change to next frame
             self.current_frame += 1
+
