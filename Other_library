@@ -1,8 +1,7 @@
 #author SryMkr
-#date 2020.1.14
+#date 2020.1.25
 
-# The library consists of some basic functions
-# to support Snake Game
+# The library consists of some basic functions to support Snake Game
 
 
 # import packages
@@ -27,12 +26,25 @@ def print_result(font_size, x_start, y_start, list, color=(0,0,0)):
     for text in list:
         # return a surface
         imgText = font_size.render(text, True, color)
+        # draw result one by one
         screen.blit(imgText, (x_start, y_start))
+        # change the position
         x_start += 240
         if x_start > 30 * 16:
             x_start = 0
             y_start += 60
 
+
+
+# set audio of game
+def game_audio(filename,volumn=0.7):
+    #initialize the mixer
+    pygame.mixer.init()
+    # get the sound file
+    sound = pygame.mixer.Sound(filename)
+    channel = pygame.mixer.find_channel(True)
+    channel.set_volume(volumn)
+    channel.play(sound)
 
 
 # save game records
@@ -131,7 +143,6 @@ class two_variate(object):
     # the function of property is to allow variate_one have the two method
     # automatically trigger when calling
     second_variate = property(get_variate_two, set_variate_two)
-
 
 
 
