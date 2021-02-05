@@ -175,3 +175,5 @@ class MySprite_food(pygame.sprite.Sprite):
 
 
 
+
+
