@@ -59,7 +59,7 @@ class MySprite_head(pygame.sprite.Sprite):
         self.one_frame_width = one_frame_width
         # load frame height
         self.one_frame_height = one_frame_height
-        # Create frame Rect(left, top, width, height)
+        # Create frame Rect(left, top, width, height) the position
         self.rect = Rect(0, 0, one_frame_width, one_frame_height)
         # frame's columns
         self.multi_frames_columns = multi_frames_columns
