@@ -12,7 +12,7 @@ class Snake_body_Sprite(pygame.sprite.Sprite):
         def __init__(self):
             pygame.sprite.Sprite.__init__(self)
             # set the snake moving direction is  left
-            self.velocity = two_variate(-1, 0)
+            self.velocity = two_Variate(-1, 0)
             # record the time of last moving
             self.old_time = 0
             # snake is made of segments
@@ -46,7 +46,7 @@ class Snake_body_Sprite(pygame.sprite.Sprite):
             # the index of last image surface
             last = len(self.segments) - 1
             # the direction of snake
-            start_velocity = two_variate(0, 0)
+            start_velocity = two_Variate(0, 0)
             # adding food according to snake moving direction
             if self.velocity.first_variate < 0:  # left
                 start_velocity.variate_one = 30
