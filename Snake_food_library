@@ -115,7 +115,7 @@ class MySprite_food(pygame.sprite.Sprite):
 # -------------------------------------------------------------------------------------------
 
 
-    # this function is for showing correct alphabet
+    # this function is for showing tip 
     def tip_update(self, current_time, change_rate, x_position, y_position):
         # continuously change frame with time
         if current_time > self.last_change_time + change_rate:
@@ -170,8 +170,6 @@ class MySprite_food(pygame.sprite.Sprite):
                         self.one_frame_height)
             # get the image surface
             self.image = self.multi_frames.subsurface(random_rect)
-
-
 
 
 
