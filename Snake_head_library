@@ -37,7 +37,7 @@ class MySprite_head(pygame.sprite.Sprite):
         return self.rect.x
     # set x_coordinate of one frame
     def _set_x_coordinate(self,value):
-        self.rect.x=value
+        self.rect.x = value
 
     x_coordinate = property(_get_x_coordinate,_set_x_coordinate)
 
