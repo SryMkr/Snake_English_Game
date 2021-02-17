@@ -1,8 +1,7 @@
-#author SryMkr
-#date 2020.1.14
+# author： SryMkr
+# date 2021.2.16
 
-# The library consists of some basic functions
-# to support Snake Game
+# The library consists of some basic functions to support Snake Game
 
 
 # import packages
@@ -13,6 +12,10 @@ import numpy as np
 # 26 alphabet
 ALPHABET_LIST = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
                  'U', 'V', 'W', 'X', 'Y', 'Z']
+
+# the width of one frame
+FRAME_WIDTH = 30
+
 
 # show general texts of screen
 def print_text(font_size, x_coordinate, y_coordinate, text, color=(0, 0, 0)):
@@ -96,12 +99,15 @@ def load_record(filename):
 
 # for three different position of three different food
 # in case they overlap
-
-def food_random_position():
+# the food cannot have the same axe coordinate with snake head
+def food_random_position(snake_head_x_coordinate,snake_head_y_coordinate):
     # create x coordinate list
-    x_coordinate_list = list(np.arange(0, 27)*30)
+    x_coordinate_list = list(np.arange(0, 27)*FRAME_WIDTH)
+    # avoid snake head contact
+    x_coordinate_list.remove(snake_head_x_coordinate)
     # create y coordinate list
-    y_coordinate_list = list(np.arange(6, 18)*30)
+    y_coordinate_list = list(np.arange(6, 24)*FRAME_WIDTH)
+    y_coordinate_list.remove(snake_head_y_coordinate)
     # randomly choose three x coordinate
     x_coordinate = random.sample(x_coordinate_list, 3)
     # randomly choose three y coordinate
