@@ -2,6 +2,7 @@
 # date 2021.1.14
 # This library is for Snake Body
 
+
 # import package
 from MyGame.Other_library import *
 from MyGame.Snake_head_library import *
@@ -12,7 +13,7 @@ class Snake_body_Sprite(pygame.sprite.Sprite):
         def __init__(self):
             pygame.sprite.Sprite.__init__(self)
             # set the snake moving direction is  left
-            self.velocity = two_variate(-1, 0)
+            self.velocity = two_Variate(-1, 0)
             # record the time of last moving
             self.old_time = 0
             # snake is made of segments
@@ -25,20 +26,20 @@ class Snake_body_Sprite(pygame.sprite.Sprite):
             # load main picture
             self.snake_head.load_head_frames("Game_Pictures/Snake_head1.png", 30, 30, 2)
             # set position
-            self.snake_head.x_coordinate = 30 * 9
-            self.snake_head.y_coordinate = 30 * 15
+            self.snake_head.x_coordinate = FRAME_WIDTH * 9
+            self.snake_head.y_coordinate = FRAME_WIDTH * 15
             # get image surface
-            self.snake_head.head_update(40, 30)
+            self.snake_head.head_update(40)
             # add the image surface in to segments list
             self.segments.append(self.snake_head)
 
             #  sprite for separate head from alphabet
             snake_head1 = MySprite_head()
             snake_head1.load_head_frames("Game_Pictures/Snake_head.png", 30, 30, 2)
-            snake_head1.x_coordinate = 30 * 8
-            snake_head1.y_coordinate = 30 * 14
+            snake_head1.x_coordinate = FRAME_WIDTH * 8
+            snake_head1.y_coordinate = FRAME_WIDTH * 14
             # 将这个surface一个个放入到一个列表中，本质上还是自己创建的snake
-            snake_head1.head_update(40, 30)
+            snake_head1.head_update(40)
             self.segments.append(snake_head1)
 
         # eating food
@@ -46,7 +47,7 @@ class Snake_body_Sprite(pygame.sprite.Sprite):
             # the index of last image surface
             last = len(self.segments) - 1
             # the direction of snake
-            start_velocity = two_variate(0, 0)
+            start_velocity = two_Variate(0, 0)
             # adding food according to snake moving direction
             if self.velocity.first_variate < 0:  # left
                 start_velocity.variate_one = 30
@@ -89,10 +90,10 @@ class Snake_body_Sprite(pygame.sprite.Sprite):
             return random_topleft_postions, snake_topleft_postions
 
         # snake moving
-        def snake_moving(self, ticks):
+        def snake_moving(self, ticks, speed):
             # control moving by time
             # 200 the speed, change if you like
-            if ticks > self.old_time + 200:
+            if ticks > self.old_time + speed:
                 # replace old time with current time
                 self.old_time = ticks
                 # pass x&y coordinate one by one except head
@@ -100,8 +101,8 @@ class Snake_body_Sprite(pygame.sprite.Sprite):
                     self.segments[n].x_coordinate = self.segments[n - 1].x_coordinate
                     self.segments[n].y_coordinate = self.segments[n - 1].y_coordinate
                 # set snake head x&y coordinate
-                self.segments[0].x_coordinate += self.velocity.first_variate * 30
-                self.segments[0].y_coordinate += self.velocity.second_variate * 30
+                self.segments[0].x_coordinate += self.velocity.first_variate * FRAME_WIDTH
+                self.segments[0].y_coordinate += self.velocity.second_variate * FRAME_WIDTH
 
 
 
