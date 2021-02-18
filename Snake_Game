@@ -1,7 +1,7 @@
 # author SryMkr
-# date 2021.1.26
+# date 2021.2.26
 # second version of Snake English Game
-# 除了优化已经没有什么事情了
+
 
 # import packages
 from MyGame.Snake_food_library import *
@@ -17,6 +17,8 @@ words_list = ['HORSE', 'BULL', 'COW', 'SHEEP', 'ZEBRA', 'DEER', 'CAT', 'LION', '
 task_words = ["马", "公牛", "奶牛", "羊", "斑马", "鹿", "猫", "狮子", "老虎", "狗", "狐狸", "松鼠", "大猩猩", "孔雀", "天鹅", "鸵鸟", "啄木鸟", "蜥蜴",
               "蟾蜍", "黄鼠狼",'结束']
 
+# snake_speed
+snake_moving_speed = 200
 
 # get sequence correct alphabet
 continuous_correct_alphabet = built_spelling_dic(words_list, ALPHABET_LIST)
@@ -26,7 +28,7 @@ continuous_correct_alphabet = built_spelling_dic(words_list, ALPHABET_LIST)
 class Snakebody_alphabet(MySprite_food):
     def __init__(self, frame_nuber):
         MySprite_food.__init__(self)
-        self.load_multi_frames("Game_Pictures/wrong_alphabet.png", 30, 30, 13)
+        self.load_multi_frames("Game_Pictures/NEW_AL1.png", FRAME_WIDTH, FRAME_WIDTH, 13)
         self.draw_current_frame(frame_nuber)
 
 
@@ -34,7 +36,7 @@ class Snakebody_alphabet(MySprite_food):
 class wrong_alphabet(MySprite_food):
     def __init__(self, frame_nuber):
         MySprite_food.__init__(self)
-        self.load_multi_frames("Game_Pictures/NEW_AL2.png", 30, 30, 13)
+        self.load_multi_frames("Game_Pictures/NEW_AL1.png", FRAME_WIDTH, FRAME_WIDTH, 13)
         self.draw_current_frame(frame_nuber)
 
 
@@ -47,7 +49,7 @@ def game_init():
     pygame.init()
     # set the width and height of window
     # it seems like a drawing board
-    screen = pygame.display.set_mode((30 * 27, 30 * 24))
+    screen = pygame.display.set_mode((FRAME_WIDTH * 27, FRAME_WIDTH * 24))
     # set screen caption
     pygame.display.set_caption("Snake English")
     # show the Chinese on the display
@@ -68,19 +70,19 @@ def game_init():
     # correct alphabet sprite
     alphabet_group = pygame.sprite.Group()
     alphabet = MySprite_food()
-    alphabet.load_multi_frames("Game_Pictures/NEW_AL1.png", 30, 30, 13)
+    alphabet.load_multi_frames("Game_Pictures/NEW_AL1.png", FRAME_WIDTH, FRAME_WIDTH, 13)
     alphabet_group.add(alphabet)
 
     # wrong alphabet sprite
     random_alphabet_group = pygame.sprite.Group()
     random_alphabet = MySprite_food()
-    random_alphabet.load_multi_frames("Game_Pictures/NEW_AL1.png", 30, 30, 13)
+    random_alphabet.load_multi_frames("Game_Pictures/NEW_AL1.png", FRAME_WIDTH, FRAME_WIDTH, 13)
     random_alphabet_group.add(random_alphabet)
 
     # create tip sprite
     tip_group = pygame.sprite.Group()
     tip = MySprite_food()
-    tip.load_multi_frames("Game_Pictures/health.png", 30, 30, 1)
+    tip.load_multi_frames("Game_Pictures/health.png", FRAME_WIDTH, FRAME_WIDTH, 1)
     tip_group.add(tip)
 
 
@@ -102,7 +104,9 @@ spell_list = list()
 
 # track eating spelling
 eating_spelling = list()
-
+# 提示的计时工具
+tip_time = 0
+tip_show = False
 
 # define pause and continue game
 def checkquit(events):
@@ -151,7 +155,7 @@ while True:
         highest_words = int(alphabet.current_word_number) - 1
 
     # once out of words, then game over
-    if int(alphabet.current_word_number) == 21:
+    if int(alphabet.current_word_number) == len(task_words):
         game_over = True
 
     # get kinds of events
@@ -183,14 +187,15 @@ while True:
         elif y >= 24:
             snake.segments[0].y_coordinate = 30 * 6
         # control the direction of snake
+        # snake cannot move to opposite direction
         if x>=0 and x <= 27 and y >=6 and y <=24:
-            if keys[K_UP] or keys[K_w]:
+            if (keys[K_UP] or keys[K_w]) and snake.velocity.second_variate!=1:
                 snake.velocity = two_Variate(0, -1)
-            elif keys[K_DOWN] or keys[K_d]:
+            elif (keys[K_DOWN] or keys[K_d]) and snake.velocity.second_variate!=-1:
                 snake.velocity = two_Variate(0, 1)
-            elif keys[K_LEFT] or keys[K_a]:
+            elif (keys[K_LEFT] or keys[K_a]) and snake.velocity.first_variate!=1:
                 snake.velocity = two_Variate(-1, 0)
-            elif keys[K_RIGHT] or keys[K_d]:
+            elif (keys[K_RIGHT] or keys[K_d]) and snake.velocity.first_variate!=-1:
                 snake.velocity = two_Variate(1, 0)
 
         # control head
@@ -205,7 +210,10 @@ while True:
             # whether food positions conflict with snake
             while not food_snake_conflict:
                 # get the position of three sprires
-                x_position_list, y_position_list = food_random_position()
+                # 产生的坐标不许和蛇头在一个坐标轴上
+                snake_head_x_coordinate = snake.snake_head.x_coordinate
+                snake_head_y_coordinate = snake.snake_head.y_coordinate
+                x_position_list, y_position_list = food_random_position(snake_head_x_coordinate,snake_head_y_coordinate)
                 food_position, snake_position = snake.snake_position(x_position_list, y_position_list)
 
                 for i in food_position:
@@ -224,7 +232,7 @@ while True:
             count = 0
 
             # snake moving
-            snake.snake_moving(gameplay_time)
+            snake.snake_moving(gameplay_time, snake_moving_speed)
 
             # all food update and keep
             tip.tip_update(1, 0, x_position_list, y_position_list)
@@ -269,12 +277,13 @@ while True:
                                               y_position_list)
                 tip.tip_update(gameplay_time + 100, 100, x_position_list, y_position_list)
                 current_score -= 10
+
             #   if eat wrong tip
             if len(pygame.sprite.groupcollide(snake.segments, tip_group, False, False)) > 0:
 
                 # print correct spelling of current task
-                print_text(CHINESE_FONT, 30 * 17, 0, "提示: " + words_list[int(alphabet.current_word_number) - 1],
-                           color=(255, 0, 0))
+                tip_show = True
+                tip_time = gameplay_time
                 # once snake tail leave tip
                 if len(pygame.sprite.spritecollide(snake.segments[-1], tip_group, False, False)) > 0:
                     # score -30
@@ -283,6 +292,8 @@ while True:
                     tip.tip_update(gameplay_time + 100, 100, x_position_list, y_position_list)
                     # tip buzz
                     game_audio("game_sound/health.ogg")
+
+
             # Snake dead once contact itself
             for n in range(1, len(snake.segments)):
                 if pygame.sprite.collide_rect(snake.segments[0], snake.segments[n]):
@@ -305,27 +316,33 @@ while True:
         backbuffer = pygame.Surface((screen.get_rect().width, screen.get_rect().height))
         backbuffer.fill((255, 0, 0))
         screen.blit(backbuffer, (0, 0))
+
         # print results after game over
         print_text(CHINESE_FONT, 0 * 0, 0, "学习结束")
-        print_text(CHINESE_FONT, 30 * 7, 0, "本轮完成: " + str(int(alphabet.current_word_number) - 1))
-        print_text(CHINESE_FONT, 30*15, 0, "本轮得分: " + str(current_score))
-
+        print_text(CHINESE_FONT, FRAME_WIDTH * 7, 0, "本轮完成: " + str(int(alphabet.current_word_number) - 1))
+        print_text(CHINESE_FONT, FRAME_WIDTH*15, 0, "本轮得分: " + str(current_score))
         # show how many words player remembered in one round
-        print_text(CHINESE_FONT, 0, 60, "本轮学习到的单词如下：")
-        print_result(OTHER_FONT, 0, 120, words_list[0:int(alphabet.current_word_number) - 1])
+        print_text(CHINESE_FONT, 0, FRAME_WIDTH*2, "本轮学习到的单词如下：")
+        print_result(OTHER_FONT, 0, FRAME_WIDTH*4, words_list[0:int(alphabet.current_word_number) - 1])
     else:
+        # show tip
+        if tip_show ==True:
+            print_text(CHINESE_FONT, FRAME_WIDTH * 17, 0, "提示: " + words_list[int(alphabet.current_word_number) - 1],
+                     color=(255, 0, 0))
+            # disappear after 1.5 second
+            if gameplay_time > tip_time + 1500:
+                tip_show = False
+
         # print current state
-        print_text(CHINESE_FONT, 30 * 8, 0, "当前任务: " + task_words[int(alphabet.current_word_number) - 1])
+        print_text(CHINESE_FONT, FRAME_WIDTH * 8, 0, "当前任务: " + task_words[int(alphabet.current_word_number) - 1])
         print_text(CHINESE_FONT, 0, 0, "当前得分: " + str(current_score))
-        print_text(CHINESE_FONT, 30 * 20, 30*4, "剩余任务: " + str(21-int(alphabet.current_word_number)))
-        #print_text(CHINESE_FONT, 30 * 9, 0, "已完成: " + str(int(alphabet.current_word_number) - 1))
-        #print_text(CHINESE_FONT, 30 * 9, 30 * 2, "总任务: " + str(len(words_list)))
-        print_text(CHINESE_FONT, 0, 30 * 2, "最高分数: " + str(highest_score))
-        print_text(CHINESE_FONT, 0, 30 * 4, "单词记录: " + str(highest_words))
+        print_text(CHINESE_FONT, FRAME_WIDTH * 20, FRAME_WIDTH*4, "剩余任务: " + str(len(task_words)-int(alphabet.current_word_number)))
+        print_text(CHINESE_FONT, 0, FRAME_WIDTH * 2, "最高分数: " + str(highest_score))
+        print_text(CHINESE_FONT, 0, FRAME_WIDTH * 4, "单词记录: " + str(highest_words))
         if int(alphabet.current_word_number) > 1:
-            print_text(CHINESE_FONT, 30 * 8, 30 * 4, "刚完成: " + words_list[int(alphabet.current_word_number) - 2])
+            print_text(CHINESE_FONT, FRAME_WIDTH * 8, FRAME_WIDTH * 4, "刚完成: " + words_list[int(alphabet.current_word_number) - 2])
         else:
-            print_text(CHINESE_FONT, 30 * 8, 30 * 4, "刚完成: " + '    ')
+            print_text(CHINESE_FONT, FRAME_WIDTH * 8, FRAME_WIDTH * 4, "刚完成: " + '    ')
 
         # current task spelling
         current_spell = words_list[int(alphabet.current_word_number) - 1]
@@ -334,21 +351,22 @@ while True:
 
         # show the process of spelling of current word
         for i in range(len(spell_list)):
-            print_text(OTHER_FONT, 30 * (i + 8), 30 * 2, spell_list[i], color=(255, 0, 0))
+            print_text(OTHER_FONT, FRAME_WIDTH * (i + 8), FRAME_WIDTH * 2, spell_list[i], color=(255, 0, 0))
         if ''.join(spell_list) == words_list[int(alphabet.current_word_number) - 2]:
-
+            # delete if do not make mistake
             if ''.join(eating_spelling) == words_list[int(alphabet.current_word_number) - 2]:
                 del snake.segments[-len(spell_list):]
             # clear the two list once task change
             eating_spelling.clear()
             spell_list.clear()
 
+        # draw lines
+        pygame.draw.line(screen, (0, 0, 0), (0, FRAME_WIDTH * 6), (FRAME_WIDTH * 27, FRAME_WIDTH * 6), 1)
+        pygame.draw.line(screen, (0, 0, 0), (0, FRAME_WIDTH * 4), (FRAME_WIDTH * 27, FRAME_WIDTH * 4), 1)
+        pygame.draw.line(screen, (0, 0, 0), (0, FRAME_WIDTH * 2), (FRAME_WIDTH * 27, FRAME_WIDTH * 2), 1)
+        pygame.draw.line(screen, (0, 0, 0), (FRAME_WIDTH*8-10, 0), (FRAME_WIDTH*8-10, FRAME_WIDTH * 6), 1)
 
         # draw all sprites
-        pygame.draw.line(screen, (0, 0, 0), (0, 30 * 6), (30 * 27, 30 * 6), 1)
-        pygame.draw.line(screen, (0, 0, 0), (0, 30 * 4), (30 * 27, 30 * 4), 1)
-        pygame.draw.line(screen, (0, 0, 0), (0, 30 * 2), (30 * 27, 30 * 2), 1)
-        pygame.draw.line(screen, (0, 0, 0), (30*8-10, 0), (30*8-10, 30 * 6), 1)
         snake.draw(screen)
         random_alphabet_group.draw(screen)
         alphabet_group.draw(screen)
@@ -356,18 +374,3 @@ while True:
 
     # draw all sprites
     pygame.display.update()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
