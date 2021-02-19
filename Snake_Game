@@ -10,12 +10,12 @@ from MyGame.Snake_head_library import *
 import sys
 
 # tip
-words_list = ['HORSE', 'BULL', 'COW', 'SHEEP', 'ZEBRA', 'DEER', 'CAT', 'LION', 'TIGER', 'DOG', 'FOX', 'SQUIRREL',
-              'GORILLA', 'PEACOCK', 'SWAN', 'OSTRICH', 'WOODPECK', 'LIZARD', 'TOAD', 'WEASEL','END']
+words_list = ['bull', 'gorilla', 'deer', 'crocodile', 'wolf',
+              'eagle', 'bat','whale','seal','camel','end']
 
 # Chinese tasks
-task_words = ["马", "公牛", "奶牛", "羊", "斑马", "鹿", "猫", "狮子", "老虎", "狗", "狐狸", "松鼠", "大猩猩", "孔雀", "天鹅", "鸵鸟", "啄木鸟", "蜥蜴",
-              "蟾蜍", "黄鼠狼",'结束']
+task_words = [ "公牛", "大猩猩", "鹿", "鳄鱼", "狼", "鹰",
+               "蝙蝠","鲸鱼","海豹","骆驼",'结束']
 
 # snake_speed
 snake_moving_speed = 200
@@ -371,6 +371,10 @@ while True:
         random_alphabet_group.draw(screen)
         alphabet_group.draw(screen)
         tip_group.draw(screen)
-
+        # 画表格
+        for i in range(7,24,1):
+            pygame.draw.line(screen, (0, 0, 0), (0, FRAME_WIDTH * i), (FRAME_WIDTH * 27, FRAME_WIDTH * i), 1)
+        for i in range(0,27,1):
+            pygame.draw.line(screen, (0, 0, 0), (FRAME_WIDTH * i, FRAME_WIDTH * 6), (FRAME_WIDTH * i, FRAME_WIDTH * 24), 1)
     # draw all sprites
     pygame.display.update()
