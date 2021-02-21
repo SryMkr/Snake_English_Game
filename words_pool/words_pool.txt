@@ -1,0 +1,1 @@
+{'0': ['end'], '1': ['bull', 'gorilla', 'deer', 'crocodile', 'wolf', 'eagle', 'bat', 'whale', 'seal', 'camel']}
