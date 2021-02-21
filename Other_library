@@ -1,5 +1,5 @@
 # author： SryMkr
-# date 2021.2.16
+# date 2021.2.21
 
 # The library consists of some basic functions to support Snake Game
 
@@ -42,7 +42,7 @@ def print_result(font_size, x_start, y_start, list, color=(0,0,0)):
         # change the y coordinate
         if x_start > 30 * 16:
             x_start = 0
-            y_start += 60
+            y_start += 120
 
 
 # get index of words task
@@ -71,7 +71,7 @@ def built_spelling_dic(task_list, alphabet_list):
 
 
 # set audio of game
-def game_audio(filename,volumn=0.7):
+def game_audio(filename,volumn=0.1,times = 0):
     #initialize the mixer
     pygame.mixer.init()
     # get the sound file
@@ -81,7 +81,52 @@ def game_audio(filename,volumn=0.7):
     # set music volume
     channel.set_volume(volumn)
     # directly play once call
-    channel.play(sound)
+    channel.play(sound,times)
+
+# 读取单词库
+def read_words_pool(filename):
+    with open(filename,'r+') as f:
+        dic = eval(f.read())  # 读取的str转换为字典
+        a = list(dic.values())
+        return a[0],a[1]
+
+# 写入单词库
+def write_words_pool(filename,original_words_pool, known_words):
+    dic = {}
+    for word in known_words:
+        if word not in original_words_pool:
+            pass
+        else:
+            original_words_pool.remove(word)
+    dic['0'] = original_words_pool
+    dic['1'] = known_words
+    with open(filename, 'w+') as f:
+        f.write(str(dic))      #把字典转化为str
+
+
+
+
+
+
+# 读取汉语库
+def read_wordTra_pool(filename):
+    with open(filename,'r',encoding='utf-8') as f:
+        dic = eval(f.read())  # 读取的str转换为字典
+        a = list(dic.values())
+        return a[0], a[1]
+
+# 写入汉语库
+def write_wordTra_pool(filename,original_words_pool, known_words):
+    dic = {}
+    with open(filename, 'w+',encoding='utf-8') as f:
+        for word in known_words:
+            if word not in original_words_pool:
+                pass
+            else:
+                original_words_pool.remove(word)
+        dic['0'] = original_words_pool
+        dic['1'] = known_words
+        f.write(str(dic))      #把字典转化为str
 
 
 # save game records
