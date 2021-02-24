@@ -4,8 +4,8 @@
 
 
 # import package
-from MyGame.Other_library import *
-from MyGame.Snake_head_library import *
+from Other_library import *
+from Snake_head_library import *
 
 
 # create the body of snake
@@ -104,6 +104,6 @@ class Snake_body_Sprite(pygame.sprite.Sprite):
                 self.segments[0].x_coordinate += self.velocity.first_variate * FRAME_WIDTH
                 self.segments[0].y_coordinate += self.velocity.second_variate * FRAME_WIDTH
 
-
+print('运行成功，请等待加载游戏')
 
 

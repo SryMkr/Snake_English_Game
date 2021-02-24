@@ -1,19 +1,19 @@
 # author SryMkr
-# date 2021.2.21
+# date 2021.2.23
 # second version of Snake English Game
 
 
 # import packages
-from MyGame.Snake_food_library import *
-from MyGame.Snake_body_library import *
-from MyGame.Snake_head_library import *
-from MyGame.thread import *
+from Snake_food_library import *
+from Snake_body_library import *
+from Snake_head_library import *
+from thread import *
 import sys
 
 # tip
 words_list,words_list_known = read_words_pool('words_pool/words_pool.txt')
 # Chinese tasks
-task_words,task_words_known = read_wordTra_pool('words_pool/words_tra_pools')
+task_words,task_words_known = read_wordTra_pool('words_pool/words_tra_pools.txt')
 
 # snake_speed
 snake_moving_speed = 200
@@ -21,15 +21,23 @@ snake_moving_speed = 200
 
 # 创建新线程
 thread_pro = myThread(1, "Thread-1", words_list)
+thread_pro.daemon = True
 # load pronunciation
 thread_pro.start()
 
 # 创建新线程
-thread_pro = myThread_PHO(2, "Thread-2", words_list)
+thread_pho_1 = myThread_PHO(2, "Thread-2", words_list[:2])
 # load pronunciation
-thread_pro.start()
-thread_pro.join()
-pro_results = thread_pro.get_result()
+thread_pho_1.start()
+thread_pho_1.join()
+
+# 创建新线程
+thread_pho = myThread_PHO(3, "Thread-3", words_list[2:])
+# load pronunciation
+thread_pho.daemon = True
+thread_pho.start()
+
+
 # get sequence correct alphabet
 continuous_correct_alphabet = built_spelling_dic(words_list, ALPHABET_LIST)
 
@@ -66,11 +74,13 @@ def game_init():
     screen = pygame.display.set_mode((FRAME_WIDTH * 27, FRAME_WIDTH * 24))
     # set screen caption
     pygame.display.set_caption("Snake English")
+    # hide mouse
+    pygame.mouse.set_visible(False)
     # show the Chinese on the display
     CHINESE_FONT = pygame.font.SysFont('华文楷体', 36)
     # show other type of font on the display
     OTHER_FONT = pygame.font.SysFont('arial', 36)
-    PHONETIC_FONT = pygame.font.Font('Lucida-Sans-Unicode.ttf', 36)
+    PHONETIC_FONT = pygame.font.Font('Fonts/Lucida-Sans-Unicode.ttf', 36)
     # game clock
     timer = pygame.time.Clock()
     # initialize snake
@@ -111,8 +121,6 @@ food_snake_conflict = False
 count = 0
 # record score
 current_score = 0
-# game_over_audio switch
-game_over_audio = True
 # track correct spelling
 spell_list = list()
 
@@ -131,12 +139,16 @@ def checkquit(events):
             # save record
             save_record('saved_files/highest_words', highest_words)
             save_record('saved_files/highest_score', highest_score)
+            write_words_pool('words_pool/words_pool.txt', words_list, words_list_known)
+            write_wordTra_pool('words_pool/words_tra_pools.txt', task_words, task_words_known)
             sys.exit(0)
     keys_two = pygame.key.get_pressed()
     if keys_two[K_ESCAPE]:
         # save record
         save_record('saved_files/highest_words', highest_words)
         save_record('saved_files/highest_score', highest_score)
+        write_words_pool('words_pool/words_pool.txt', words_list, words_list_known)
+        write_wordTra_pool('words_pool/words_tra_pools.txt', task_words, task_words_known)
         sys.exit(0)
 
     elif keys_two[K_p]:
@@ -149,10 +161,8 @@ def checkquit(events):
         pygame.mixer.music.set_volume(1)
         pygame.mixer.music.play()
 
-
-
-
-while True:
+try:
+  while True:
 
     # how many frames in 1S
     timer.tick(200)
@@ -184,7 +194,7 @@ while True:
 
     if pause:
         # Pause BGM
-        pygame.mixer.music.pause()
+        pygame.mixer.pause()
         # show the words once game suspended
         print_text(CHINESE_FONT, 250, 300, '游戏暂停', color=(255, 0, 0))
         print_text(CHINESE_FONT, 185, 400, '请按[P]键开始游戏', color=(255, 0, 0))
@@ -192,7 +202,7 @@ while True:
     else:
         # Unpause BGM
 
-        pygame.mixer.music.unpause()
+        pygame.mixer.unpause()
         # get held keys
         keys = pygame.key.get_pressed()
         # Snake dead once contact walls
@@ -221,8 +231,6 @@ while True:
 
         # control head
         snake_head_direction(snake, snake.velocity)
-        if snake.snake_head.current_frame < snake.snake_head.first_frame:
-            snake.snake_head.current_frame = snake.snake_head.first_frame
         snake.snake_head.head_update(gameplay_time, 100)
 
         # if not game over
@@ -287,6 +295,7 @@ while True:
 
             #   if eat wrong food
             elif len(pygame.sprite.spritecollide(snake.segments[0], random_alphabet_group, False, False)) > 0:
+
                 # wrong buzz
                 game_audio("game_sound/wrong.ogg")
                 random_frame = random_alphabet.random_frame
@@ -299,14 +308,13 @@ while True:
                                               y_position_list)
                 tip.tip_update(gameplay_time + 100, 100, x_position_list, y_position_list)
                 current_score -= 10
-
-            #   if eat wrong tip
+            #   if eat tip
             if len(pygame.sprite.groupcollide(snake.segments, tip_group, False, False)) > 0:
                 # print correct spelling of current task
                 tip_show = True
                 tip_time = gameplay_time
                 # once snake tail leave tip
-                if len(pygame.sprite.spritecollide(snake.segments[-1], tip_group, False, False)) > 0:
+                if pygame.sprite.spritecollideany(snake.segments[-1], tip_group, False):
                     # score -30
                     current_score -= 30
                     # tip update
@@ -329,12 +337,13 @@ while True:
     if game_over == True:
         if write_button == True:
             write_words_pool('words_pool/words_pool.txt', words_list, words_list_known)
-            write_wordTra_pool('words_pool/words_tra_pools',task_words,task_words_known)
+            write_wordTra_pool('words_pool/words_tra_pools.txt',task_words,task_words_known)
             write_button = False
-        if game_over_audio == True:
+            # stop backgroud music
+            pygame.mixer.stop()
             # game over buzz
             game_audio("game_sound/game_over.ogg")
-            game_over_audio = False
+
 
         backbuffer = pygame.Surface((screen.get_rect().width, screen.get_rect().height))
         backbuffer.fill((255, 0, 0))
@@ -361,7 +370,8 @@ while True:
 
         # print current state
         print_text(CHINESE_FONT, FRAME_WIDTH * 8, 0, "当前任务: " + task_words[int(alphabet.current_word_number) - 1])
-        print_text(PHONETIC_FONT, FRAME_WIDTH * 17, 0, '/'+ pro_results[int(alphabet.current_word_number) - 1]+'/')
+        pho_current_words = load_pho('Words_phonetic/'+ words_list[int(alphabet.current_word_number) - 1]+'.txt')
+        print_text(PHONETIC_FONT, FRAME_WIDTH * 17, 0, '/'+ pho_current_words+'/')
         print_text(CHINESE_FONT, 0, 0, "当前得分: " + str(current_score))
         print_text(CHINESE_FONT, FRAME_WIDTH * 20, FRAME_WIDTH*4, "剩余任务: " + str(len(task_words)-int(alphabet.current_word_number)))
         print_text(CHINESE_FONT, 0, FRAME_WIDTH * 2, "最高分数: " + str(highest_score))
@@ -387,8 +397,6 @@ while True:
             # record word from words_list if do not make mistake
                 words_list_known.append(words_list[int(alphabet.current_word_number) - 2])
                 task_words_known.append(task_words[int(alphabet.current_word_number) - 2])
-                print(words_list_known)
-                print(task_words_known)
             # clear the two list once task change
             eating_spelling.clear()
             spell_list.clear()
@@ -417,3 +425,9 @@ while True:
 
     # draw all sprites
     pygame.display.update()
+except:
+    save_record('saved_files/highest_words', highest_words)
+    save_record('saved_files/highest_score', highest_score)
+    write_words_pool('words_pool/words_pool.txt', words_list, words_list_known)
+    write_wordTra_pool('words_pool/words_tra_pools.txt', task_words, task_words_known)
+    sys.exit(0)

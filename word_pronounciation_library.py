@@ -1,5 +1,5 @@
 # import package
-# the function of this library is for pronounciation
+# the function of this library is for pronunciation
 import os
 import urllib.request
 
