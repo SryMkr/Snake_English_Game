@@ -1,5 +1,5 @@
 # author： SryMkr
-# date 2021.2.17
+# date 2021.2.24
 
 # The library consists of some basic functions to support Snake Game
 
@@ -27,7 +27,7 @@ def print_text(font_size, x_coordinate, y_coordinate, text, color=(0, 0, 0)):
     screen.blit(text_img, (x_coordinate, y_coordinate))
 
 
-# show game results of screen
+# show game results of screen，这块随着词库的增加将来可能需要改
 def print_result(font_size, x_start, y_start, list, color=(0,0,0)):
     # get window/screen/display surface  return surface
     screen = pygame.display.get_surface()
@@ -45,7 +45,7 @@ def print_result(font_size, x_start, y_start, list, color=(0,0,0)):
             y_start += 120
 
 
-# get index of words task
+# get index of words task 现在是直接把所有的单词保留进去，以后就是用一个加一个
 # get the counterpart index of alphabet
 def built_spelling_dic(task_list, alphabet_list):
     # create empty dictionary
@@ -83,14 +83,17 @@ def game_audio(filename,volumn=0.1,times = 0):
     # directly play once call
     channel.play(sound,times)
 
-# 读取单词库
+
+# read words pool
 def read_words_pool(filename):
     with open(filename,'r+') as f:
+        # str-dic
         dic = eval(f.read())  # 读取的str转换为字典
         a = list(dic.values())
         return a[0],a[1]
 
-# 写入单词库
+
+# write words pool
 def write_words_pool(filename,original_words_pool, known_words):
     dic = {}
     for word in known_words:
@@ -101,21 +104,20 @@ def write_words_pool(filename,original_words_pool, known_words):
     dic['0'] = original_words_pool
     dic['1'] = known_words
     with open(filename, 'w+') as f:
-        f.write(str(dic))      #把字典转化为str
+        # dic to str
+        f.write(str(dic))
 
 
 
-
-
-
-# 读取汉语库
+# read chinese meaning
 def read_wordTra_pool(filename):
     with open(filename,'r',encoding='utf-8') as f:
-        dic = eval(f.read())  # 读取的str转换为字典
+        dic = eval(f.read())
         a = list(dic.values())
         return a[0], a[1]
 
-# 写入汉语库
+
+# write chinese meaning
 def write_wordTra_pool(filename,original_words_pool, known_words):
     dic = {}
     with open(filename, 'w+',encoding='utf-8') as f:
@@ -126,19 +128,32 @@ def write_wordTra_pool(filename,original_words_pool, known_words):
                 original_words_pool.remove(word)
         dic['0'] = original_words_pool
         dic['1'] = known_words
-        f.write(str(dic))      #把字典转化为str
+        f.write(str(dic))
 
 
 # save game records
 def save_record(filename, highest_record):
-    with open(filename, 'w') as f:
+    with open(filename, 'w',encoding='UTF-8') as f:
         f.write(str(highest_record))
 
 
 # load game records
 def load_record(filename):
-    with open(filename, 'r') as f:
+    with open(filename, 'r',encoding='UTF-8') as f:
         record = f.read()
+    return record
+
+
+# save words phonetic
+def save_pho(filename, highest_record):
+    with open(filename, 'w',encoding='UTF-8') as f:
+        f.write(str(highest_record))
+
+
+# load words phonetic
+def load_pho(filename):
+    with open(filename, 'r',encoding='UTF-8') as f:
+       record= f.read()
     return record
 
 
@@ -148,10 +163,11 @@ def load_record(filename):
 def food_random_position(snake_head_x_coordinate,snake_head_y_coordinate):
     # create x coordinate list
     x_coordinate_list = list(np.arange(0, 27)*FRAME_WIDTH)
-    # avoid snake head contact
+    # avoid occasional snake head contact
     x_coordinate_list.remove(snake_head_x_coordinate)
     # create y coordinate list
     y_coordinate_list = list(np.arange(6, 24)*FRAME_WIDTH)
+    # avoid occasional snake head contact
     y_coordinate_list.remove(snake_head_y_coordinate)
     # randomly choose three x coordinate
     x_coordinate = random.sample(x_coordinate_list, 3)
@@ -179,6 +195,9 @@ def snake_head_direction(snake, snake_direction):
     elif snake_direction.first_variate > 0:
         snake.snake_head.first_frame = 2 * snake.snake_head.multi_frames_columns
         snake.snake_head.last_frame = snake.snake_head.first_frame + 1
+    # change to correct direction
+    if snake.snake_head.current_frame < snake.snake_head.first_frame:
+        snake.snake_head.current_frame = snake.snake_head.first_frame
 
 
 # define two variate with two method respectively
