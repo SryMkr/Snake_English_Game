@@ -3,6 +3,12 @@
 # second version of Snake English Game
 
 
+# 如何将单词和汉语意思放到一起，并且逐个单词进行显示，并且可以随机挑选
+# 语音和发音可以作为单独线程执行，但是得保证用到的单词已经有了音标和发音
+# 将汉语意思替换为图片
+# 优化代码，尽量减少代码工作
+
+
 # import packages
 from Snake_food_library import *
 from Snake_body_library import *
