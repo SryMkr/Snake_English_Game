@@ -103,6 +103,8 @@ def snake_head_direction(snake, snake_direction):
     elif snake_direction.first_variate > 0:
         snake.snake_head.first_frame = 2 * snake.snake_head.multi_frames_columns
         snake.snake_head.last_frame = snake.snake_head.first_frame + 1
+
     # change to correct direction
     if snake.snake_head.current_frame < snake.snake_head.first_frame:
         snake.snake_head.current_frame = snake.snake_head.first_frame
+
