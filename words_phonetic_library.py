@@ -3,7 +3,7 @@ author SryMkr
 date: 2021.3.13
 the function of this library is for words' phonetics
 有时候单词比较多会不下载，但是也不是找不到的原因，闹不清楚
-最好的办法就是我们已经下载好了，尽量网络的还有机器的依赖
+最好的办法就是我们已经下载好了，尽量减少网络的还有机器的依赖
 '''
 
 # import packages
