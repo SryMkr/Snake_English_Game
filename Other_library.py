@@ -43,7 +43,7 @@ def print_text(font_size, x_coordinate, y_coordinate, text, color=(0, 0, 0)):
     screen.blit(text_img, (x_coordinate, y_coordinate))
 
 
-# show game results of screen，最多只能训练20个单词
+# show game results of screen
 def print_result(font_size, x_start, y_start, list, color=(0,0,0)):
     # get window/screen/display surface  return surface
     screen = pygame.display.get_surface()
@@ -73,6 +73,7 @@ def built_spelling_dic(task_list, alphabet_list):
     # reture an alphabet dictionary for show correct alphabet
     for word in task_list:
         word = word.lower()
+        word = word.strip()
         for correct_spelling in word:
             # find out every alphabet index
             alphabet_index = alphabet_list.index(correct_spelling)
